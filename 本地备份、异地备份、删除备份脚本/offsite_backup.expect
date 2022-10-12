@@ -1,0 +1,29 @@
+#!/usr/bin/expect -f
+# 获取当前日期 例如：2022-10-12
+
+set date [ clock format [ clock seconds ] -format "%Y-%m-%d" ] 
+
+# 传输用户名
+set username mrswhite
+# 对端hostIP地址
+set host 192.168.37.9
+# 密码
+set password test20221012
+#设置本地传输路径-前缀
+set source_folder /root/backup
+#设置兑换传输路径
+set backup_folder /root/back_up_offsite
+
+
+#  expect默认timeout为30S  超过30s未传输完会停止，设置为 -1 则不限制超时时间
+set timeout -1
+
+#                    压缩  递归   本地绝对路径           用户名   目标IP   目标路径
+ spawn  /usr/bin/scp  -C   -r    $source_folder/$date/   $username@$host:$backup_folder
+
+expect  {
+"*yes/no" {send "yes\r";exp_continue}
+"*password:" {send "$password\r"}
+}
+
+expect eof
